@@ -1,16 +1,12 @@
 import { test, expect } from '@playwright/test';
+const LoginPage =require("../pages/loginpage")
+const HomePage=require("../pages/homepage")
+const testdata = JSON.parse(JSON.stringify(require("../testdata.json")))
 
     test('user sucessfully order untill complete', async ({ page }) => {
-        // Login flow with valid credential
         await page.goto('/')
-        await page.getByText('Swag Labs').isVisible();
-        await page.locator('[ placeholder="Username"]').isVisible;
-        await page.locator('[placeholder="Password"]').isVisible;
-        await page.locator('[ id="user-name"]').fill('standard_user');
-        await page.locator('[data-test="password"]').fill('secret_sauce');
-        await page.getByText('Products').isVisible();
-        await page.locator('[data-test="login-button"]').isVisible();
-        await page.locator('[data-test="login-button"]').click();
+        const loginPage = new LoginPage(page)
+        await loginPage.loginToApps(testdata.username, testdata.password)
 
         // Add product to cart
         await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
@@ -50,9 +46,9 @@ import { test, expect } from '@playwright/test';
         await page.locator('[data-test="complete-text"]').isVisible();
 
         // Logout
-        await page.getByRole('button', { name: 'Open Menu' }).click();
-        await page.locator('[data-test="logout-sidebar-link"]').click();
-        await page.locator('[data-test="login-button"]').isVisible();
+       const homePage = new HomePage(page)
+       await homePage.logoutApps()
+       await loginPage.verifySignIn()
         
 
 });
